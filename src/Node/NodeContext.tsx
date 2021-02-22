@@ -14,6 +14,8 @@ type Node = NodeProps & {
   id: string
   x: MotionValue
   y: MotionValue
+  selected: boolean
+  select: () => void
 }
 
 //@ts-ignore
@@ -22,10 +24,10 @@ const Context = createContext<Node>()
 let currentY = 20
 export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
   const { nodes, setNodes } = useContainer()
-  const [id, setId] = useState(Math.random() + '')
+  const [id] = useState(Math.random() + '')
 
   useEffect(() => {
-    setNodes([...nodes, id])
+    setNodes([...nodes, { id, selected: false }])
   }, [])
 
   const ioAmount = Math.max(
@@ -37,8 +39,28 @@ export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
   const y = useMotionValue(currentY)
   const height = 24 + ioAmount * 16
   currentY += height
+
+  const handleSelect = () => {
+    setNodes(
+      nodes.map((node) => {
+        if (node.id === id) node.selected = true
+        return node
+      })
+    )
+  }
+
   return (
-    <Context.Provider value={{ x, y, width: 100, id, height, ...rest }}>
+    <Context.Provider
+      value={{
+        x,
+        y,
+        width: 100,
+        id,
+        height,
+        selected: nodes.find((node) => node.id === id)?.selected,
+        select: handleSelect,
+        ...rest
+      }}>
       {children}
     </Context.Provider>
   )

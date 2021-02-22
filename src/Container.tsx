@@ -6,6 +6,7 @@ import { useContainer } from './ContainerContext'
 
 export const Container = ({ children }) => {
   const {
+    deSelectAllNodes,
     selector: { startX, startY, currentX, currentY, selecting, setSelecting }
   } = useContainer()
   const containerRef = useRef<SVGSVGElement>()
@@ -14,6 +15,7 @@ export const Container = ({ children }) => {
     if (!selecting) setSelecting(true)
     if (startX.get() === 0) startX.set(info.point.x)
     if (startY.get() === 0) startY.set(info.point.y)
+    deSelectAllNodes()
     currentX.set(info.point.x)
     currentY.set(info.point.y)
   }
@@ -24,11 +26,16 @@ export const Container = ({ children }) => {
     startY.set(0)
   }
 
+  const handleTap = () => {
+    deSelectAllNodes()
+  }
+
   return (
     <motion.svg
       className="container"
       width="100%"
       height="100%"
+      onTap={handleTap}
       onPan={handleOnPan}
       onPanEnd={handleOnPanEnd}
       ref={containerRef}>

@@ -4,16 +4,21 @@ import {
   FC,
   useContext,
   Dispatch,
-  SetStateAction
+  SetStateAction,
+  useEffect
 } from 'react'
 import { useMotionValue, MotionValue } from 'framer-motion'
 
-type Node = string
+type Node = {
+  id: string
+  selected: boolean
+}
 type Values = {
   wires: WireT[]
   setWires: Dispatch<SetStateAction<WireT[]>>
   nodes: Node[]
   setNodes: Dispatch<SetStateAction<Node[]>>
+  deSelectAllNodes: () => void
   selector: {
     selecting: boolean
     setSelecting: Dispatch<SetStateAction<boolean>>
@@ -23,7 +28,6 @@ type Values = {
     currentY: MotionValue
   }
 }
-
 export type WireT = {
   id: string
   start: string
@@ -33,11 +37,17 @@ export type WireT = {
   y1: MotionValue
   y2: MotionValue
 }
-
 //@ts-ignore
 const Context = createContext<Values>()
 
-export const ContainerProvider: FC = ({ children }) => {
+type Props = {
+  onChange: (state: any) => void
+}
+
+export const ContainerProvider: FC<Props> = ({
+  children,
+  onChange = () => {}
+}) => {
   const [nodes, setNodes] = useState<Node[]>([])
   const [wires, setWires] = useState<WireT[]>([])
   const selectorStartX = useMotionValue(0)
@@ -46,6 +56,20 @@ export const ContainerProvider: FC = ({ children }) => {
   const selectorCurrentY = useMotionValue(0)
   const [selecting, setSelecting] = useState(false)
 
+  const deSelectAllNodes = () => {
+    setNodes(
+      [...nodes].map((node) => {
+        node.selected = false
+        return node
+      })
+    )
+  }
+
+  useEffect(() => {
+    console.log(nodes)
+    onChange(nodes)
+  }, [])
+
   return (
     <Context.Provider
       value={{
@@ -53,6 +77,7 @@ export const ContainerProvider: FC = ({ children }) => {
         setWires,
         nodes,
         setNodes,
+        deSelectAllNodes,
         selector: {
           selecting,
           setSelecting,

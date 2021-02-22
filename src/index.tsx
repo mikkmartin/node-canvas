@@ -1,6 +1,6 @@
 import { render } from 'react-dom'
 
-import NodeCanvas from './NodeCanvas'
+import App from './App'
 
 const rootElement = document.getElementById('root')
-render(<NodeCanvas />, rootElement)
+render(<App />, rootElement)

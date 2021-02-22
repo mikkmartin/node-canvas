@@ -4,8 +4,8 @@ import { useNode } from './NodeContext'
 import { useContainer } from '../ContainerContext'
 
 export const Container: FC = ({ children }) => {
-  const { wires } = useContainer()
-  const { width, height, x, y, id } = useNode()
+  const { wires, deSelectAllNodes } = useContainer()
+  const { width, height, x, y, id, select, selected } = useNode()
   const startPos = useRef({ x: x.get(), y: y.get() })
   const size = { width, height }
   const wireStartPos = useRef<{ x: number; y: number }[]>([])
@@ -14,7 +14,7 @@ export const Container: FC = ({ children }) => {
     id
   ])
 
-  const handlePanStart = (_, info: PanInfo) => {
+  const handlePanStart = () => {
     wireStartPos.current = connectedWires.map(({ x1, y1 }) => ({
       x: x1.get(),
       y: y1.get()
@@ -39,13 +39,27 @@ export const Container: FC = ({ children }) => {
       y: y.get()
     }
   }
+
+  const handleTapStart = (ev) => {
+    ev.stopPropagation()
+    deSelectAllNodes()
+    select()
+  }
+
   return (
     <motion.g
       style={{ x, y }}
+      onTapStart={handleTapStart}
       onPanStart={handlePanStart}
       onPan={handlePan}
       onPanEnd={handlePanEnd}>
-      <rect filter="url(#shadow)" {...size} fill="#4C4C4C" rx="8" />
+      <rect
+        filter="url(#shadow)"
+        stroke={selected ? 'red' : 'none'}
+        {...size}
+        fill="#4C4C4C"
+        rx="8"
+      />
       {children}
     </motion.g>
   )

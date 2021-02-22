@@ -1,11 +1,12 @@
 import './styles.scss'
+import { FC } from 'react'
 import { ContainerProvider } from './ContainerContext'
 import Node from './Node'
 import { Container } from './Container'
 
-export default function NodeCanvas() {
+const NodeCanvas: FC<{ onChange: (state: any) => void }> = ({ onChange }) => {
   return (
-    <ContainerProvider>
+    <ContainerProvider onChange={onChange}>
       <Container>
         <Node type="number" inputs={[2]} outputs={[2]} />
         <Node type="number" inputs={[3, 5]} outputs={[2]} />
@@ -13,3 +14,5 @@ export default function NodeCanvas() {
     </ContainerProvider>
   )
 }
+
+export default NodeCanvas
