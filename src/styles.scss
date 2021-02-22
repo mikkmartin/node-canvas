@@ -3,6 +3,10 @@
   padding: 0;
 }
 
+:root {
+  --highlight: orange
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -29,7 +33,6 @@ svg {
     text-transform: capitalize;
     font-size: 10px;
     fill: white;
-    font-weight: bold;
     text-align: center;
     user-select: none;
   }

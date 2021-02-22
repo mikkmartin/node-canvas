@@ -3,8 +3,8 @@ import { useContainer } from '../ContainerContext'
 import { useNode } from './NodeContext'
 import { motion, PanInfo, motionValue } from 'framer-motion'
 
-type SocketT = { type: 'input' | 'output'; nth: number }
-export const Socket: FC<SocketT> = ({ type, nth }) => {
+type SocketT = { type: 'input' | 'output'; value: number; nth: number }
+export const Socket: FC<SocketT> = ({ type, value, nth }) => {
   const { width, x: _x, y: _y, id: nodeId } = useNode()
   const { wires, setWires } = useContainer()
   const wireId = useRef<string>()
@@ -64,6 +64,16 @@ export const Socket: FC<SocketT> = ({ type, nth }) => {
         r="5"
         fill="none"
       />
+      {type === 'input' && (
+        <text opacity={0.5} x={x + 16} y={y + 12}>
+          {value}
+        </text>
+      )}
+      {type === 'output' && (
+        <text opacity={0.5} x={x - 6} y={y + 12}>
+          {value}
+        </text>
+      )}
     </motion.g>
   )
 }

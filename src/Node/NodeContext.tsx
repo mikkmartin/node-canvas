@@ -17,16 +17,32 @@ type Node = NodeProps & {
   y: MotionValue
   selected: boolean
   select: () => void
+  deselect: () => void
+}
+
+type Box2D = {
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 //@ts-ignore
 const Context = createContext<Node>()
 
+const isIntersecting = (a: Box2D, b: Box2D) => {
+  return (
+    Math.abs(a.x - b.x) * 2 < a.width + b.width &&
+    Math.abs(a.y - b.y) * 2 < a.height + b.height
+  )
+}
+
 let currentY = 20
 let _nodes: any = []
 export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
-  const { nodes, setNodes } = useContainer()
+  const { nodes, setNodes, selector } = useContainer()
   const [id] = useState(Math.random() + '')
+  const width = 100
 
   const ioAmount = Math.max(
     rest.inputs ? rest.inputs.length : 0,
@@ -42,7 +58,15 @@ export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
     setNodes(
       nodes.map((node) => {
         if (node.id === id) node.selected = true
-        else node.selected = false
+        return node
+      })
+    )
+  }
+
+  const deselect = () => {
+    setNodes(
+      nodes.map((node) => {
+        if (node.id === id) node.selected = false
         return node
       })
     )
@@ -53,6 +77,33 @@ export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
     setNodes(_nodes)
   }, [])
 
+  useEffect(() => {
+    const unlisten = selector.currentX.onChange(() => {
+      const selectorBox: Box2D = {
+        x: Math.min(selector.currentX.get(), selector.startX.get()),
+        y: Math.min(selector.currentY.get(), selector.startY.get()),
+        width: Math.abs(selector.currentX.get() - selector.startX.get()),
+        height: Math.abs(selector.currentY.get() - selector.startY.get())
+      }
+      const nodeBox: Box2D = {
+        x: x.get(),
+        y: y.get(),
+        width,
+        height
+      }
+      const intersecting = isIntersecting(selectorBox, nodeBox)
+      /*
+      setNodes(
+        [...nodes].map((node) => {
+          if (node.id === id && intersecting) node.selected = true
+          return node
+        })
+        )
+      */
+    })
+    return () => unlisten()
+  }, [])
+
   const selected = Boolean(nodes.find((node) => node.id === id)?.selected)
 
   return (
@@ -60,11 +111,12 @@ export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
       value={{
         x,
         y,
-        width: 100,
+        width,
         id,
         height,
         selected,
         select,
+        deselect,
         ...rest
       }}>
       {children}

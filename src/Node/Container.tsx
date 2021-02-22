@@ -5,7 +5,7 @@ import { useContainer } from '../ContainerContext'
 
 export const Container: FC = ({ children }) => {
   const { wires, deSelectAllNodes } = useContainer()
-  const { width, height, x, y, id, select, selected } = useNode()
+  const { width, height, x, y, id, select, deselect, selected } = useNode()
   const startPos = useRef({ x: x.get(), y: y.get() })
   const size = { width, height }
   const wireStartPos = useRef<{ x: number; y: number }[]>([])
@@ -40,10 +40,11 @@ export const Container: FC = ({ children }) => {
     }
   }
 
-  const handleTapStart = (ev) => {
+  const handleTapStart = (ev: PointerEvent) => {
     ev.stopPropagation()
-    deSelectAllNodes()
-    select()
+    if (!ev.metaKey && !ev.shiftKey) deSelectAllNodes()
+    if (selected && (ev.metaKey || ev.shiftKey)) deselect()
+    else select()
   }
 
   return (
@@ -55,7 +56,7 @@ export const Container: FC = ({ children }) => {
       onPanEnd={handlePanEnd}>
       <rect
         filter="url(#shadow)"
-        stroke={selected ? 'red' : 'none'}
+        stroke={selected ? 'var(--highlight)' : 'none'}
         {...size}
         fill="#4C4C4C"
         rx="8"

@@ -9,7 +9,7 @@ const NodeCanvas: FC<{ onChange: (state: any) => void }> = ({ onChange }) => {
     <ContainerProvider onChange={onChange}>
       <Container>
         <Node key="one" type="number" inputs={[2]} outputs={[2]} />
-        <Node key="two" type="number" inputs={[3, 5]} outputs={[2]} />
+        <Node key="two" type="+" inputs={[3, 5]} outputs={[8]} />
       </Container>
     </ContainerProvider>
   )

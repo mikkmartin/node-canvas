@@ -5,9 +5,7 @@ import {
   useContext,
   Dispatch,
   SetStateAction,
-  useEffect,
-  Children,
-  cloneElement
+  useEffect
 } from 'react'
 import { useMotionValue, MotionValue } from 'framer-motion'
 
@@ -21,6 +19,7 @@ type Values = {
   nodes: Node[]
   setNodes: Dispatch<SetStateAction<Node[]>>
   deSelectAllNodes: () => void
+  selectNode: () => void
   selector: {
     selecting: boolean
     setSelecting: Dispatch<SetStateAction<boolean>>
@@ -69,6 +68,10 @@ export const ContainerProvider: FC<Props> = ({
     )
   }
 
+  const selectNode = (id: string) => {
+    console.log({ id })
+  }
+
   useEffect(() => {
     onChange(nodes)
   }, [onChange, nodes])
@@ -80,6 +83,7 @@ export const ContainerProvider: FC<Props> = ({
         setWires,
         nodes,
         setNodes,
+        selectNode,
         deSelectAllNodes,
         selector: {
           selecting,

@@ -7,10 +7,10 @@ export const IO = () => {
   return (
     <>
       {inputs.map((input, i) => (
-        <Socket key={'i-' + i} type="input" nth={i} />
+        <Socket key={'i-' + i} type="input" value={input} nth={i} />
       ))}
-      {outputs.map((input, i) => (
-        <Socket key={'o-' + i} type="output" nth={i} />
+      {outputs.map((output, i) => (
+        <Socket key={'o-' + i} type="output" value={output} nth={i} />
       ))}
     </>
   )
