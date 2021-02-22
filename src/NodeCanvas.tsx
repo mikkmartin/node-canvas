@@ -8,8 +8,8 @@ const NodeCanvas: FC<{ onChange: (state: any) => void }> = ({ onChange }) => {
   return (
     <ContainerProvider onChange={onChange}>
       <Container>
-        <Node type="number" inputs={[2]} outputs={[2]} />
-        <Node type="number" inputs={[3, 5]} outputs={[2]} />
+        <Node key="one" type="number" inputs={[2]} outputs={[2]} />
+        <Node key="two" type="number" inputs={[3, 5]} outputs={[2]} />
       </Container>
     </ContainerProvider>
   )

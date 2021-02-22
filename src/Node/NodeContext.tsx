@@ -4,6 +4,7 @@ import { useContainer } from '../ContainerContext'
 
 export type NodeProps = {
   type: string
+  id?: string
   inputs?: number[]
   outputs?: number[]
 }
@@ -22,13 +23,10 @@ type Node = NodeProps & {
 const Context = createContext<Node>()
 
 let currentY = 20
+let _nodes: any = []
 export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
   const { nodes, setNodes } = useContainer()
   const [id] = useState(Math.random() + '')
-
-  useEffect(() => {
-    setNodes([...nodes, { id, selected: false }])
-  }, [])
 
   const ioAmount = Math.max(
     rest.inputs ? rest.inputs.length : 0,
@@ -40,14 +38,22 @@ export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
   const height = 24 + ioAmount * 16
   currentY += height
 
-  const handleSelect = () => {
+  const select = () => {
     setNodes(
       nodes.map((node) => {
         if (node.id === id) node.selected = true
+        else node.selected = false
         return node
       })
     )
   }
+
+  useEffect(() => {
+    _nodes.push({ id, selected: false })
+    setNodes(_nodes)
+  }, [])
+
+  const selected = Boolean(nodes.find((node) => node.id === id)?.selected)
 
   return (
     <Context.Provider
@@ -57,8 +63,8 @@ export const NodeProvider: FC<NodeProps> = ({ children, ...rest }) => {
         width: 100,
         id,
         height,
-        selected: nodes.find((node) => node.id === id)?.selected,
-        select: handleSelect,
+        selected,
+        select,
         ...rest
       }}>
       {children}

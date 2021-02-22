@@ -5,7 +5,9 @@ import {
   useContext,
   Dispatch,
   SetStateAction,
-  useEffect
+  useEffect,
+  Children,
+  cloneElement
 } from 'react'
 import { useMotionValue, MotionValue } from 'framer-motion'
 
@@ -57,6 +59,8 @@ export const ContainerProvider: FC<Props> = ({
   const [selecting, setSelecting] = useState(false)
 
   const deSelectAllNodes = () => {
+    if (!Boolean(nodes)) return
+    //if (Boolean(nodes.find((node) => !node.selected))) return
     setNodes(
       [...nodes].map((node) => {
         node.selected = false
@@ -66,9 +70,8 @@ export const ContainerProvider: FC<Props> = ({
   }
 
   useEffect(() => {
-    console.log(nodes)
     onChange(nodes)
-  }, [])
+  }, [onChange, nodes])
 
   return (
     <Context.Provider
